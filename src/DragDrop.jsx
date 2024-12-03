@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 
 const DragDrop = ({initialdata}) => {
     // console.log(initialdata)
-    const [data,newdata]=useState(initialdata);
+    const [data,setdata]=useState(initialdata);
 
     const dragitem=useRef();
     const dragcontainer=useRef();
@@ -17,12 +17,29 @@ const DragDrop = ({initialdata}) => {
         e.target.style.opacity="1"
     }
 
+    const handledrop=(e,targetcontainer)=>{
+        const item=dragitem.current;
+        const sourcecontainer=dragcontainer.current;
+        setdata((prev)=>{
+            const newdata={...prev} ;
+            newdata[sourcecontainer]=newdata[sourcecontainer].filter((i)=>i!==item);
+            newdata[targetcontainer]=[...newdata[targetcontainer],item];
+            return newdata;
+        })
+    }
+
+    const handledraghover=(e)=>{
+        e.preventDefault();
+    }
+
   return (
     
     <div style={{display:"flex",justifyContent:"space-around"}}>
     {Object.keys(data).map((container,index)=>{
         return (
             <div key={index}
+            onDrop={(e)=>handledrop(e,container)}
+            onDragOver={handledraghover}
             style={{
                 background:"f0f0f0",
                 padding:"1rem",
